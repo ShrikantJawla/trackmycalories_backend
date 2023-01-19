@@ -3,6 +3,7 @@ const { authMiddleWare } = require('../../middlewares/authMiddleware')
 const Feeds = require('./feed.model')
 const upload = require('express-fileupload');
 const cloudinary = require('../../configs/cloudnaryConfig')
+const fs = require('fs')
 
 
 const router = Router();
@@ -61,7 +62,7 @@ router.post('/postFeed', async (req, res) => {
     try {
         if (req.files) {
             const file = req.files.image;
-            return file.mv('./upload/images/' + file.name, async (err) => {
+            return fs.writeFile('./upload/images/' + file.name, async (err) => {
                 if (err) {
                     console.log(err)
                     return res.status(500).send({
