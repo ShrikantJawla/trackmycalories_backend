@@ -1,7 +1,6 @@
 const { Router } = require('express')
 const { authMiddleWare } = require('../../middlewares/authMiddleware')
 const Feeds = require('./feed.model')
-const upload = require('express-fileupload');
 const cloudinary = require('../../configs/cloudnaryConfig')
 const path = require('path');
 const multer = require('multer');
