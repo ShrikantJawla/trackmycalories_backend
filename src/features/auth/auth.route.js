@@ -1,7 +1,6 @@
 const express = require("express");
 const Users = require('./auth.model')
 const path = require('path');
-const fs = require('fs');
 const multer = require('multer');
 const cloudinary = require('../../configs/cloudnaryConfig')
 const { authMiddleWare } = require('../../middlewares/authMiddleware')

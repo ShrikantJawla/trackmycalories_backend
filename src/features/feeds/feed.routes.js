@@ -3,12 +3,39 @@ const { authMiddleWare } = require('../../middlewares/authMiddleware')
 const Feeds = require('./feed.model')
 const upload = require('express-fileupload');
 const cloudinary = require('../../configs/cloudnaryConfig')
-const fs = require('fs')
+const path = require('path');
+const multer = require('multer');
+
+
+const storage = multer.diskStorage({
+    destination: function (req, res, cb) {
+        cb(null, './upload/Images')
+    },
+    filename: function (req, file, cb) {
+        const suffix = Date.now() + '-' + Math.round(Math.random()) * 1E9;
+        return cb(null, file.fieldname + '-' + suffix + path.extname(file.originalname));
+    }
+})
+
+const upload = multer({
+    storage,
+    limits: {
+        fileSize: 5000000,
+        files: 1,
+    }
+})
+
+const errhandler = (err, req, res, next) => {
+    if (err instanceof multer.MulterError) {
+        res.send(err.message)
+    }
+}
 
 
 const router = Router();
 router.use(authMiddleWare);
 router.use(upload())
+router.use(errhandler)
 
 
 router.get('/getAllPosts', async (req, res) => {
@@ -57,30 +84,17 @@ router.get('/getSingleFeed/:feedId', async (req, res) => {
 
 
 
-router.post('/postFeed', async (req, res) => {
+router.post('/postFeed', upload.single('image'), async (req, res) => {
     const { feedText } = req.body;
     try {
-        if (req.files) {
-            const file = req.files.image;
-            return fs.writeFile('./upload/images/' + file.name, async (err) => {
-                if (err) {
-                    console.log(err)
-                    return res.status(500).send({
-                        status: 0,
-                        message: err.message
-                    })
-                } else {
-                    const result = await cloudinary.uploader.upload('./upload/images/' + file.name, {
-                        folder: 'profileImages'
-                    })
-                    const newPost = await Feeds.create({ user: req.userId, image: result.secure_url, feedText })
-                    if (newPost) {
-                        return res.status(201).send({
-                            status: 1,
-                            message: 'new comment has been posted successfully!'
-                        })
-                    }
-                }
+        const result = await cloudinary.uploader.upload(`${req.file.destination + '/' + req.file.filename}`, {
+            folder: 'feedImages'
+        })
+        const newPost = await Feeds.create({ user: req.userId, image: result.secure_url, feedText })
+        if (newPost) {
+            return res.status(201).send({
+                status: 1,
+                message: 'new comment has been posted successfully!'
             })
         }
     } catch (error) {
