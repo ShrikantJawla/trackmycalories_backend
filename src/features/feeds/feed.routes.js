@@ -33,7 +33,6 @@ const errhandler = (err, req, res, next) => {
 
 const router = Router();
 router.use(authMiddleWare);
-router.use(upload())
 router.use(errhandler)
 
 
