@@ -61,7 +61,7 @@ router.post('/postFeed', async (req, res) => {
     try {
         if (req.files) {
             const file = req.files.image;
-            return file.mv('upload/images/' + file.name, async (err) => {
+            return file.mv('./upload/images/' + file.name, async (err) => {
                 if (err) {
                     console.log(err)
                     return res.status(500).send({
