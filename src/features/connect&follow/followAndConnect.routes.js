@@ -11,10 +11,11 @@ router.use(authMiddleWare)
 
 router.post('/follow', async (req, res) => {
     const { userId } = req.body;
-    console.log(userId)
     try {
         let existingFollowingId = await Users.findOne({ _id: req.userId, following: userId })
         let existingFollowedId = await Users.findOne({ _id: userId, following: req.userId })
+        console.log('followed:', existingFollowedId)
+        console.log('following', existingFollowingId)
         if (!existingFollowingId && !existingFollowedId) {
             await Users.updateOne({ _id: req.userId }, { $push: { following: userId } })
             await Users.updateOne({ _id: userId }, { $push: { followed: req.userId } })
