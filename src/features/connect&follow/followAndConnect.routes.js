@@ -11,6 +11,7 @@ router.use(authMiddleWare)
 
 router.post('/follow', async (req, res) => {
     const { userId } = req.body;
+    console.log(userId)
     try {
         let existingFollowingId = await Users.findOne({ _id: req.userId, following: userId })
         let existingFollowedId = await Users.findOne({ _id: userId, following: req.userId })
