@@ -13,7 +13,7 @@ router.post('/follow', async (req, res) => {
     const { userId } = req.body;
     try {
         let existingFollowingId = await Users.findOne({ _id: req.userId, following: userId })
-        let existingFollowedId = await Users.findOne({ _id: userId, following: req.userId })
+        let existingFollowedId = await Users.findOne({ _id: userId, followed: req.userId })
         console.log('followed:', existingFollowedId)
         console.log('following', existingFollowingId)
         if (!existingFollowingId && !existingFollowedId) {
