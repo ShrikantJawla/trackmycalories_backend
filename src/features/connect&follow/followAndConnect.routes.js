@@ -14,8 +14,6 @@ router.post('/follow', async (req, res) => {
     try {
         let existingFollowingId = await Users.findOne({ _id: req.userId, following: userId })
         let existingFollowedId = await Users.findOne({ _id: userId, followed: req.userId })
-        console.log('followed:', existingFollowedId)
-        console.log('following', existingFollowingId)
         if (!existingFollowingId && !existingFollowedId) {
             await Users.updateOne({ _id: req.userId }, { $push: { following: userId } })
             await Users.updateOne({ _id: userId }, { $push: { followed: req.userId } })
